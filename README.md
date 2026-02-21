@@ -129,7 +129,7 @@ python3 scripts/move_to.py --port /dev/ttyUSB0 --mapping config/mapping.json --t
 python3 huweibot/core/coords.py
 ```
 - Elements (`ElementRef` / detected `elements`) are always preferred.
-- 元素优先，grid 仅 fallback：只有 elements 不可用/紧急兜底才允许使用 grid 坐标；正常情况下 Planner/Executor 应优先通过 Selector/ElementRef 定位。
+- Elements are preferred; grid is fallback-only: use grid coordinates only when elements are unavailable or in emergency fallback scenarios, and Planner/Executor should prioritize Selector/ElementRef resolution.
 - Grid coordinates are emergency fallback only when reliable elements are unavailable.
 - Mapping rules are fixed and clamp-safe: `screen_px -> grid(0..1000) -> screen_px` with round-trip error within `0..1px`.
 
@@ -211,7 +211,7 @@ python3 -m huweibot.main rule-script --help
 ```
 
 Behavior constraints:
-- Commands requiring GRBL must provide `--port` (`需要 --port（GRBL on A）`).
+- Commands requiring GRBL must provide `--port` (GRBL on machine A).
 - Commands requiring camera must open camera successfully; otherwise exit with clear error.
 - `run-macro --dry-run` does not open camera or trigger hardware.
 - `allow_vlm` defaults to false.
@@ -282,7 +282,7 @@ python3 -m huweibot.main task daemon --dry-run
 - `task daemon` emits trigger/finish reminders to terminal and appends events into `artifacts/notifications.log`.
 - `run-task` supports mode/goal flags; phone dry-run can be validated without hardware:
 ```bash
-python3 -m huweibot.main run-task --mode phone --dry-run --goal "打开某App并点击某区域"
+python3 -m huweibot.main run-task --mode phone --dry-run --goal "Open an app and tap a target area"
 ```
 
 ## Notes
