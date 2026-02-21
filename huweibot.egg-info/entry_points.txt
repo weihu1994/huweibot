@@ -1,0 +1,3 @@
+[console_scripts]
+huweibot = huweibot.main:main
+xbot = xbot.main:main

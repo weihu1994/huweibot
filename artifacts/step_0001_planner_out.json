@@ -1,0 +1,26 @@
+{
+  "action": {
+    "repeat": 1,
+    "action_ttl_ms": 0,
+    "continue_until": null,
+    "type": "WAIT",
+    "duration_ms": 500
+  },
+  "verify": {
+    "type": "NONE",
+    "text": null,
+    "roi": null,
+    "min_match_ratio": 0.8,
+    "min_delta": 6,
+    "target": null,
+    "target_ref": null,
+    "rules": [],
+    "timeout_ms": 1500,
+    "allow_vlm": false
+  },
+  "repeat": null,
+  "continue_until": null,
+  "action_ttl_ms": null,
+  "obs_mode": "delta",
+  "reasoning_hint": null
+}

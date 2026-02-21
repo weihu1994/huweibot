@@ -1,0 +1,20 @@
+{
+  "time": 1771684979.870911,
+  "mode": "delta",
+  "source": "planner",
+  "reason": "delta_lock",
+  "removed_keys": [
+    "task",
+    "constraints",
+    "system",
+    "full_elements"
+  ],
+  "kept_keys": [
+    "c",
+    "ed",
+    "la",
+    "lv",
+    "ms",
+    "u"
+  ]
+}

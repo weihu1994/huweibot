@@ -1,0 +1,12 @@
+opencv-python
+numpy
+pyserial
+pydantic<3,>=2
+pillow
+pyyaml
+
+[dev]
+fastapi
+uvicorn
+rich
+pytest

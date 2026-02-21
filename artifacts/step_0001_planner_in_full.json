@@ -1,0 +1,24 @@
+{
+  "task": "smoke dry run",
+  "constraints": [
+    "pure_mouse_only",
+    "no_system_api_injection",
+    "type_text_requires_osk",
+    "click_scroll_should_verify"
+  ],
+  "obs": {
+    "v": 1,
+    "enc": "packed",
+    "m": 1,
+    "c": null,
+    "a": "dry_run",
+    "k": false,
+    "u": 0.0,
+    "e": []
+  },
+  "memory": {
+    "last_action": null,
+    "last_verify": null,
+    "macro_state": null
+  }
+}

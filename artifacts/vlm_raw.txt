@@ -1,0 +1,7 @@
+{
+  "ts": 1771600419.506855,
+  "trigger_reason": "elements_below_min",
+  "local_elements": 0,
+  "ui_change_score": 0.0,
+  "provider": "dummy_vlm"
+}

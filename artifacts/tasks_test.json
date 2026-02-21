@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "bce57780f0cf",
+      "title": "demo-phone",
+      "instruction": "tap center",
+      "mode": "phone",
+      "status": "failed",
+      "created_at": 1771664464.461409,
+      "last_run_at": 1771664465.005018,
+      "next_run_at": null,
+      "retries": 1,
+      "every_seconds": null,
+      "schedule": null
+    },
+    {
+      "id": "8aa5efb6a9e9",
+      "title": "demo-pc",
+      "instruction": "open settings",
+      "mode": "pc",
+      "status": "failed",
+      "created_at": 1771664464.652425,
+      "last_run_at": 1771664465.005748,
+      "next_run_at": null,
+      "retries": 1,
+      "every_seconds": null,
+      "schedule": null
+    }
+  ],
+  "updated_at": 1771664465.0057878
+}

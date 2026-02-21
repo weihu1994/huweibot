@@ -1,0 +1,17 @@
+keyboard
+on-screen keyboard
+touch keyboard
+osk
+ime
+pinyin
+space
+backspace
+enter
+shift
+caps
+中英
+zh
+en
+123
+?123
+abc

@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>huweibot Web Console</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --line: #d0d7de;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #0f766e;
+      --danger: #b91c1c;
+      --warn: #b45309;
+      --ok: #15803d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #edf2f7 0%, var(--bg) 60%);
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    .nav {
+      background: #111827;
+      color: #f9fafb;
+      padding: 18px 12px;
+      border-right: 1px solid #1f2937;
+    }
+    .brand {
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+    .brand small { display: block; font-size: 12px; color: #93c5fd; margin-top: 4px; }
+    .nav button {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      margin: 4px 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #d1d5db;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .nav button.active,
+    .nav button:hover { background: #1f2937; color: #ffffff; }
+
+    .main { padding: 16px 18px 24px; }
+    .topbar {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: #fff;
+      font-size: 13px;
+    }
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .b-ok { background: #dcfce7; color: #166534; }
+    .b-warn { background: #fef3c7; color: #92400e; }
+    .b-err { background: #fee2e2; color: #991b1b; }
+    .btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn:hover { border-color: #94a3b8; }
+    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-ghost { background: #f8fafc; }
+    .btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(280px, 1fr)); gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(240px, 1fr)); gap: 12px; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .card h3 { margin: 0 0 10px; font-size: 15px; }
+    .card h4 { margin: 6px 0 8px; font-size: 14px; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .coming { color: var(--warn); font-size: 12px; margin-left: 8px; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; align-items: center; }
+    input, select, textarea {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 13px;
+      background: #fff;
+    }
+    input[type="text"], input[type="number"], textarea, select { width: 100%; }
+    textarea { min-height: 90px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .field { flex: 1; min-width: 180px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 6px 4px; text-align: left; }
+    th { color: #374151; }
+
+    .console {
+      width: 100%;
+      min-height: 320px;
+      background: #0b1020;
+      color: #dbeafe;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      overflow: auto;
+    }
+    .errbox {
+      border: 1px solid #fecaca;
+      background: #fff1f2;
+      color: #9f1239;
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 8px;
+      display: none;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="nav">
+    <div class="brand">huweibot<small>Web Console MVP+</small></div>
+    <button class="tablink active" data-tab="dashboard">Dashboard</button>
+    <button class="tablink" data-tab="models">Models</button>
+    <button class="tablink" data-tab="pc">PC Control</button>
+    <button class="tablink" data-tab="phone">Phone Control</button>
+    <button class="tablink" data-tab="tasks">Tasks</button>
+    <button class="tablink" data-tab="scheduler">Scheduler</button>
+    <button class="tablink" data-tab="logs">Logs</button>
+    <button class="tablink" data-tab="settings">Settings</button>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="chip">
+        <strong>Mode</strong>
+        <select id="globalMode" style="width:auto">
+          <option value="pc">PC</option>
+          <option value="phone">Phone</option>
+        </select>
+      </div>
+      <div class="chip">
+        <label><input type="checkbox" id="globalDryRun" checked> Dry-Run (default ON)</label>
+      </div>
+      <div class="chip">
+        <label><input type="checkbox" id="globalAllowReal"> Allow real execution</label>
+      </div>
+      <button class="btn btn-primary" id="btnStartQuick">Start</button>
+      <button class="btn" id="btnStopQuick">Stop</button>
+      <button class="btn btn-danger" id="btnEmergency">Emergency Stop</button>
+      <span id="topStatus" class="badge b-warn">loading...</span>
+    </div>
+
+    <section id="tab-dashboard" class="tab active">
+      <div class="card">
+        <h3>Dashboard</h3>
+        <div class="row">
+          <div class="field"><input id="quickTask" type="text" placeholder="Task instruction (run-task)"></div>
+          <button class="btn btn-primary" id="btnRunTask">Run Task</button>
+          <button class="btn" id="btnModeSwitch">Apply Mode</button>
+        </div>
+        <div id="errorBox" class="errbox"></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card"><h4>Camera</h4><div id="stCamera" class="muted">-</div></div>
+        <div class="card"><h4>Calib</h4><div id="stCalib" class="muted">-</div></div>
+        <div class="card"><h4>Controller</h4><div id="stController" class="muted">-</div></div>
+        <div class="card"><h4>Provider</h4><div id="stProvider" class="muted">-</div></div>
+        <div class="card"><h4>TaskRunner</h4><div id="stTaskRunner" class="muted">-</div></div>
+        <div class="card"><h4>Safety</h4><div id="stSafety" class="muted">-</div></div>
+      </div>
+    </section>
+
+    <section id="tab-models" class="tab">
+      <div class="card">
+        <h3>Models</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label>Provider</label>
+            <select id="mProvider">
+              <option value="dummy">dummy</option>
+              <option value="openai">openai</option>
+              <option value="anthropic">anthropic</option>
+              <option value="gemini">gemini</option>
+              <option value="openai_compat">openai_compat</option>
+            </select>
+          </div>
+          <div class="field"><label>Model</label><input id="mModel" type="text" placeholder="model"></div>
+          <div class="field"><label>Base URL</label><input id="mBaseUrl" type="text" placeholder="https://..."></div>
+          <div class="field"><label>Profile (openai_compat)</label>
+            <select id="mProfile">
+              <option value="generic">generic</option>
+              <option value="azure">azure</option>
+              <option value="openrouter">openrouter</option>
+              <option value="together">together</option>
+              <option value="groq">groq</option>
+            </select>
+          </div>
+          <div class="field"><label>API style</label>
+            <select id="mApiStyle">
+              <option value="auto">auto</option>
+              <option value="chat_completions">chat_completions</option>
+              <option value="responses">responses</option>
+            </select>
+          </div>
+          <div class="field"><label>API key (optional)</label><input id="mApiKey" type="text" placeholder="will be redacted"></div>
+          <div class="field"><label>Headers JSON</label><textarea id="mHeaders" placeholder='{"x-api-key":"..."}'></textarea></div>
+          <div class="field"><label>Query JSON</label><textarea id="mQuery" placeholder='{"tenant":"abc"}'></textarea></div>
+          <div class="field"><label>Azure deployment</label><input id="mAzureDeployment" type="text" placeholder="deployment"></div>
+          <div class="field"><label>Azure api-version</label><input id="mAzureApiVersion" type="text" placeholder="2024-10-21"></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnProviderValidate">Validate config</button>
+          <button class="btn" id="btnProviderDryPing">Dry-run ping</button>
+          <button class="btn btn-primary" id="btnProviderPing">Ping</button>
+        </div>
+        <div class="console" id="providerOutput"></div>
+      </div>
+    </section>
+
+    <section id="tab-pc" class="tab">
+      <div class="card">
+        <h3>PC Control</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h4>A. Camera &amp; Screen</h4>
+            <div class="row">
+              <button class="btn" id="pcPreview">Preview Camera</button>
+              <button class="btn" id="pcSnapshot">Snapshot</button>
+              <button class="btn" id="pcValidate">Validate Screen</button>
+              <button class="btn" id="pcRecalib">Recalibrate</button>
+            </div>
+            <div id="pcCameraInfo" class="muted">-</div>
+          </div>
+          <div class="card">
+            <h4>B. Cursor &amp; Mapping</h4>
+            <div class="row">
+              <button class="btn" id="pcDetectCursor">Detect Cursor</button>
+              <button class="btn" id="pcRecenter">Recenter</button>
+              <button class="btn" id="pcDrift">Drift Check</button>
+              <button class="btn" id="pcMap">Calibrate px-&gt;mm</button>
+            </div>
+            <div class="row">
+              <div class="field"><label>Grid</label><input id="pcGrid" type="text" value="1000x1000"></div>
+              <div class="field"><label>Move speed</label><input id="pcSpeed" type="number" value="1"></div>
+              <div class="field"><label>Verify timeout(ms)</label><input id="pcVerifyTimeout" type="number" value="2000"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>C. Actions</h4>
+          <div class="row">
+            <div class="field"><input id="pcX" type="number" placeholder="x"></div>
+            <div class="field"><input id="pcY" type="number" placeholder="y"></div>
+            <button class="btn" id="pcMoveTo">Move To(x,y)</button>
+            <button class="btn" id="pcLClick">Left Click</button>
+            <button class="btn" id="pcRClick">Right Click</button>
+            <button class="btn" id="pcDblClick">Double Click</button>
+            <button class="btn" id="pcScrollUp">Scroll +</button>
+            <button class="btn" id="pcScrollDown">Scroll -</button>
+          </div>
+          <div class="row">
+            <div class="field"><input id="pcQuery" type="text" placeholder="Click element by id/query"></div>
+            <button class="btn" id="pcClickByQuery">Click by query/id</button>
+            <button class="btn" id="pcDrag">Drag(from,to)</button>
+            <span class="coming">MVP / Coming soon for most low-level actions</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>D. UI Elements</h4>
+          <div class="row">
+            <button class="btn" id="pcInspect">Inspect Elements</button>
+            <button class="btn" id="pcExportElems">Export elements.json</button>
+            <button class="btn" id="pcHighlight">Highlight element</button>
+            <span class="coming">Highlight = Coming soon</span>
+          </div>
+          <table>
+            <thead><tr><th>id</th><th>role</th><th>text</th><th>bbox</th><th>clickable</th><th>confidence</th></tr></thead>
+            <tbody id="pcElementsTable"><tr><td colspan="6" class="muted">No elements loaded</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-phone" class="tab">
+      <div class="card">
+        <h3>Phone Control</h3>
+        <div class="card">
+          <h4>A. Screen Region</h4>
+          <div class="row">
+            <button class="btn" id="phCalib">Calibrate phone screen</button>
+            <button class="btn" id="phRecalib">Recalibrate</button>
+            <button class="btn" id="phOverlay">Show boundary overlay</button>
+            <span class="coming">overlay = Coming soon</span>
+          </div>
+          <div class="row">
+            <div class="field"><label>Phone grid</label><input id="phGrid" type="text" value="200x100"></div>
+            <div class="field"><label>Margin shrink(px)</label><input id="phMargin" type="number" value="6"></div>
+            <div class="field"><label>Z press ms</label><input id="phPressMs" type="number" value="40"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>B. Touch Controller</h4>
+          <div class="row">
+            <div class="field"><input id="phGX" type="number" placeholder="gx"></div>
+            <div class="field"><input id="phGY" type="number" placeholder="gy"></div>
+            <button class="btn" id="phTap">Tap</button>
+            <button class="btn" id="phLongPress">Long press</button>
+          </div>
+          <div class="row">
+            <div class="field"><input id="phGX2" type="number" placeholder="gx2"></div>
+            <div class="field"><input id="phGY2" type="number" placeholder="gy2"></div>
+            <button class="btn" id="phSwipe">Swipe</button>
+            <button class="btn btn-danger" id="phLift">Emergency lift (Z up)</button>
+          </div>
+          <div class="row">
+            <span class="badge b-warn" id="phIR">IR distance: unknown</span>
+            <label><input type="checkbox" checked disabled> Bounds protection ON</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-tasks" class="tab">
+      <div class="card">
+        <h3>Tasks</h3>
+        <div class="row">
+          <div class="field"><label>Name</label><input id="taskName" type="text" placeholder="task name"></div>
+          <div class="field"><label>Mode</label><select id="taskMode"><option value="pc">pc</option><option value="phone">phone</option></select></div>
+          <div class="field"><label>Max steps</label><input id="taskMaxSteps" type="number" value="30"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Instruction</label><textarea id="taskInstruction" placeholder="Natural-language task instruction"></textarea></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="tmplOpenApp">Template: Open app and locate button</button>
+          <button class="btn" id="tmplInputSubmit">Template: Type text and submit</button>
+          <button class="btn" id="tmplPhoneTap">Template: Tap phone target area</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="taskAdd">Add Task</button>
+          <button class="btn btn-primary" id="taskRun">Run</button>
+          <button class="btn" id="taskStop">Stop</button>
+          <button class="btn" id="taskPause">Pause</button>
+          <button class="btn" id="taskResume">Resume</button>
+          <button class="btn" id="taskRefresh">Refresh List</button>
+        </div>
+        <table>
+          <thead><tr><th>id</th><th>name</th><th>mode</th><th>status</th><th>next_run_at</th><th>last_run_at</th><th>retries</th></tr></thead>
+          <tbody id="taskTable"><tr><td colspan="7" class="muted">No task</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-scheduler" class="tab">
+      <div class="card">
+        <h3>Scheduler</h3>
+        <div class="row">
+          <div class="field"><label>Task ID (optional)</label><input id="schTaskId" type="text" placeholder="existing task id"></div>
+          <div class="field"><label>Name (if no task id)</label><input id="schName" type="text"></div>
+          <div class="field"><label>Mode</label><select id="schMode"><option value="pc">pc</option><option value="phone">phone</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Instruction (if no task id)</label><input id="schInstr" type="text"></div>
+          <div class="field"><label>every_seconds</label><input id="schEvery" type="number" placeholder="e.g. 60"></div>
+          <div class="field"><label>at_ts (unix)</label><input id="schAt" type="number" placeholder="optional"></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="schAdd">Add schedule</button>
+          <button class="btn" id="schRefresh">Refresh</button>
+          <button class="btn" id="schRunNow">Run selected task now</button>
+        </div>
+        <table>
+          <thead><tr><th>id</th><th>name</th><th>schedule</th><th>next_run_at</th><th>status</th></tr></thead>
+          <tbody id="schTable"><tr><td colspan="5" class="muted">No scheduler item</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-logs" class="tab">
+      <div class="card">
+        <h3>Logs &amp; Events</h3>
+        <div class="row">
+          <div class="field"><label>Level</label>
+            <select id="logLevel"><option value="ALL">ALL</option><option value="INFO">INFO</option><option value="WARN">WARN</option><option value="ERROR">ERROR</option></select>
+          </div>
+          <div class="field"><label>Keyword</label><input id="logKeyword" type="text" placeholder="keyword"></div>
+          <div class="field"><label>Lines</label><input id="logLines" type="number" value="200"></div>
+          <button class="btn" id="logRefresh">Refresh</button>
+          <button class="btn" id="logDownload">Download logs</button>
+          <button class="btn" id="logClear">Clear view</button>
+        </div>
+        <div class="console" id="logConsole"></div>
+      </div>
+    </section>
+
+    <section id="tab-settings" class="tab">
+      <div class="card">
+        <h3>Settings</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h4>General</h4>
+            <div class="row"><label><input type="checkbox" id="sDryRun" checked> Default dry-run</label></div>
+            <div class="row"><label><input type="checkbox" id="sAllowReal"> Allow real execution (global)</label></div>
+            <div class="row"><label><input type="checkbox" id="sFallback"> Allow fallback_to_dummy</label></div>
+            <div class="row"><div class="field"><label>Default provider</label><input id="sProvider" type="text" value="dummy"></div></div>
+            <div class="row"><button class="btn" id="sSave">Save settings</button></div>
+          </div>
+          <div class="card">
+            <h4>Version</h4>
+            <div id="versionInfo" class="muted">-</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const state = { tasks: [], scheduler: [] };
+
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.style.display = 'block';
+  box.textContent = msg;
+}
+function clearError() {
+  const box = document.getElementById('errorBox');
+  box.style.display = 'none';
+  box.textContent = '';
+}
+
+async function api(method, path, body) {
+  const resp = await fetch(path, {
+    method,
+    headers: {'Content-Type':'application/json'},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const text = await resp.text();
+  let data = {};
+  try { data = text ? JSON.parse(text) : {}; } catch { data = {raw: text}; }
+  if (!resp.ok) {
+    throw new Error(data.detail || data.error || data.raw || `HTTP ${resp.status}`);
+  }
+  return data;
+}
+
+function currentMode() {
+  return document.getElementById('globalMode').value;
+}
+function currentDryRun() {
+  return !!document.getElementById('globalDryRun').checked;
+}
+function mustConfirmReal() {
+  if (currentDryRun()) return true;
+  return window.confirm('Dry-Run is OFF. This will execute real actions. Continue?');
+}
+
+function bindTabs() {
+  document.querySelectorAll('.tablink').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.tablink').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    };
+  });
+}
+
+function statusBadge(ok, text) {
+  if (ok === 'ok') return `<span class="badge b-ok">${text}</span>`;
+  if (ok === 'err') return `<span class="badge b-err">${text}</span>`;
+  return `<span class="badge b-warn">${text}</span>`;
+}
+
+async function refreshStatus() {
+  try {
+    const s = await api('GET', '/api/status');
+    document.getElementById('globalMode').value = s.mode || 'pc';
+    document.getElementById('globalDryRun').checked = !!s.dry_run;
+    document.getElementById('globalAllowReal').checked = !!s.allow_real_execution;
+    document.getElementById('topStatus').className = 'badge ' + (s.running ? 'b-warn' : 'b-ok');
+    document.getElementById('topStatus').textContent = s.running ? 'running' : 'idle';
+
+    const c = s.components || {};
+    document.getElementById('stCamera').innerHTML = `${statusBadge(c.camera?.status === 'ready' ? 'ok' : 'warn', c.camera?.status || 'unknown')} ${c.camera?.detail || '-'}`;
+    document.getElementById('stCalib').innerHTML = `${statusBadge(c.calib?.status === 'ready' ? 'ok' : 'warn', c.calib?.status || 'unknown')} ${c.calib?.detail || '-'}`;
+    document.getElementById('stController').innerHTML = `${statusBadge(c.controller?.status === 'ready' ? 'ok' : 'warn', c.controller?.status || 'unknown')} ${c.controller?.detail || '-'}`;
+    document.getElementById('stProvider').innerHTML = `${statusBadge('ok', c.provider?.detail || '-')}`;
+    document.getElementById('stTaskRunner').innerHTML = `${statusBadge(s.running ? 'warn' : 'ok', c.task_runner?.status || (s.running ? 'running' : 'idle'))} ${JSON.stringify(s.current_cmd || [])}`;
+    document.getElementById('stSafety').innerHTML = `bounds_protection=${s.safety?.bounds_protection ? 'on' : 'off'}, emergency_stop=${s.safety?.emergency_stop ? 'yes' : 'no'}`;
+
+    document.getElementById('sDryRun').checked = !!s.dry_run;
+    document.getElementById('sAllowReal').checked = !!s.allow_real_execution;
+    document.getElementById('sFallback').checked = !!s.allow_fallback_to_dummy;
+    document.getElementById('sProvider').value = s.default_provider || 'dummy';
+  } catch (e) {
+    document.getElementById('topStatus').className = 'badge b-err';
+    document.getElementById('topStatus').textContent = 'error';
+    showError(e.message);
+  }
+}
+
+async function refreshLogs() {
+  const lines = Number(document.getElementById('logLines').value || 200);
+  const level = document.getElementById('logLevel').value;
+  const keyword = (document.getElementById('logKeyword').value || '').toLowerCase();
+  try {
+    const out = await api('GET', `/api/logs/tail?lines=${Math.max(1, lines)}`);
+    let logs = out.lines || [];
+    if (level !== 'ALL') logs = logs.filter(x => String(x).toUpperCase().includes(level));
+    if (keyword) logs = logs.filter(x => String(x).toLowerCase().includes(keyword));
+    const text = logs.join('\n');
+    const consoleEl = document.getElementById('logConsole');
+    consoleEl.textContent = text;
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function runGeneric(action, extraArgs=[]) {
+  const dry = currentDryRun();
+  let confirmReal = false;
+  if (!dry) {
+    if (!mustConfirmReal()) return;
+    confirmReal = true;
+  }
+  try {
+    await api('POST', '/api/run', {
+      action,
+      mode: currentMode(),
+      task: document.getElementById('quickTask').value || '',
+      dry_run: dry,
+      confirm_real: confirmReal,
+      extra_args: extraArgs,
+    });
+    clearError();
+    await refreshStatus();
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function providerPing(dryRun) {
+  try {
+    const body = {
+      provider: document.getElementById('mProvider').value,
+      model: document.getElementById('mModel').value || null,
+      base_url: document.getElementById('mBaseUrl').value || null,
+      api_key: document.getElementById('mApiKey').value || null,
+      api_style: document.getElementById('mApiStyle').value || null,
+      profile: document.getElementById('mProfile').value || null,
+      headers_json: document.getElementById('mHeaders').value || null,
+      query_json: document.getElementById('mQuery').value || null,
+      azure_deployment: document.getElementById('mAzureDeployment').value || null,
+      azure_api_version: document.getElementById('mAzureApiVersion').value || null,
+      dry_run: !!dryRun,
+    };
+    if (!dryRun && !mustConfirmReal()) return;
+    const out = await api('POST', '/api/provider/ping', body);
+    document.getElementById('providerOutput').textContent = JSON.stringify(out, null, 2);
+    clearError();
+  } catch (e) {
+    document.getElementById('providerOutput').textContent = String(e.message || e);
+    showError(e.message);
+  }
+}
+
+async function refreshTasks() {
+  try {
+    const out = await api('GET', '/api/tasks');
+    state.tasks = out.tasks || [];
+    const tb = document.getElementById('taskTable');
+    if (!state.tasks.length) {
+      tb.innerHTML = '<tr><td colspan="7" class="muted">No task</td></tr>';
+      return;
+    }
+    tb.innerHTML = state.tasks.map(t => `<tr>
+      <td><input type="radio" name="taskSel" value="${t.id}"> ${t.id}</td>
+      <td>${t.name || ''}</td>
+      <td>${t.mode || ''}</td>
+      <td>${t.status || ''}</td>
+      <td>${t.next_run_at || ''}</td>
+      <td>${t.last_run_at || ''}</td>
+      <td>${t.retries ?? 0}</td>
+    </tr>`).join('');
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function selectedTaskId() {
+  const checked = document.querySelector('input[name="taskSel"]:checked');
+  return checked ? checked.value : null;
+}
+
+async function refreshScheduler() {
+  try {
+    const out = await api('GET', '/api/scheduler');
+    state.scheduler = out.items || [];
+    const tb = document.getElementById('schTable');
+    if (!state.scheduler.length) {
+      tb.innerHTML = '<tr><td colspan="5" class="muted">No scheduler item</td></tr>';
+      return;
+    }
+    tb.innerHTML = state.scheduler.map(t => `<tr>
+      <td>${t.id || ''}</td>
+      <td>${t.name || ''}</td>
+      <td>${(t.schedule || {}).kind || ''}:${(t.schedule || {}).every_seconds || (t.schedule || {}).at_ts || ''}</td>
+      <td>${t.next_run_at || ''}</td>
+      <td>${t.status || ''}</td>
+    </tr>`).join('');
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function bindActions() {
+  document.getElementById('btnStartQuick').onclick = () => runGeneric('run_task');
+  document.getElementById('btnRunTask').onclick = () => runGeneric('run_task');
+  document.getElementById('btnStopQuick').onclick = async () => { await api('POST', '/api/stop'); await refreshStatus(); };
+  document.getElementById('btnEmergency').onclick = async () => { await api('POST', '/api/emergency-stop'); await refreshStatus(); };
+  document.getElementById('btnModeSwitch').onclick = async () => {
+    try {
+      const mode = currentMode();
+      if (!window.confirm(`Switching to ${mode.toUpperCase()} mode will stop the current task. Continue?`)) return;
+      await api('POST', '/api/mode', {mode, stop_current:true});
+      await refreshStatus();
+    } catch (e) { showError(e.message); }
+  };
+
+  document.getElementById('globalDryRun').onchange = async (e) => {
+    await api('POST', '/api/settings', {dry_run: !!e.target.checked});
+    await refreshStatus();
+  };
+  document.getElementById('globalAllowReal').onchange = async (e) => {
+    await api('POST', '/api/settings', {allow_real_execution: !!e.target.checked});
+    await refreshStatus();
+  };
+
+  document.getElementById('btnProviderValidate').onclick = () => providerPing(true);
+  document.getElementById('btnProviderDryPing').onclick = () => providerPing(true);
+  document.getElementById('btnProviderPing').onclick = () => providerPing(false);
+
+  document.getElementById('pcPreview').onclick = async () => { try { await api('POST', '/api/pc/preview'); } catch (e) { showError(e.message); } };
+  document.getElementById('pcSnapshot').onclick = async () => {
+    try {
+      const out = await api('POST', '/api/pc/snapshot');
+      document.getElementById('pcCameraInfo').textContent = `snapshot: ${out.path} (${out.resolution})`;
+    } catch (e) { showError(e.message); }
+  };
+  document.getElementById('pcValidate').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'validate_screen'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcRecalib').onclick = async () => { await runGeneric('calibrate_screen'); };
+  document.getElementById('pcDetectCursor').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'detect_cursor'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcRecenter').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'recenter'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcDrift').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'drift_check'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcMap').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'calibrate_px_mm'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcMoveTo').onclick = async () => {
+    const out = await api('POST','/api/pc/action',{
+      action:'move_to',
+      x:Number(document.getElementById('pcX').value),
+      y:Number(document.getElementById('pcY').value)
+    });
+    showError(out.error || 'Not implemented');
+  };
+  document.getElementById('pcLClick').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'left_click'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcRClick').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'right_click'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcDblClick').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'double_click'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcScrollUp').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'scroll_up'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcScrollDown').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'scroll_down'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcClickByQuery').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'click_by_query', query:document.getElementById('pcQuery').value}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcDrag').onclick = async () => { const out = await api('POST','/api/pc/action',{action:'drag'}); showError(out.error || 'Not implemented'); };
+  document.getElementById('pcInspect').onclick = async () => { await api('POST', '/api/pc/inspect_elements'); };
+  document.getElementById('pcExportElems').onclick = async () => { showError('Coming soon: export current elements'); };
+  document.getElementById('pcHighlight').onclick = async () => { showError('Coming soon: highlight element'); };
+
+  document.getElementById('phCalib').onclick = async () => { await api('POST', '/api/phone/calibrate'); };
+  document.getElementById('phRecalib').onclick = async () => { await api('POST', '/api/phone/calibrate'); };
+  document.getElementById('phOverlay').onclick = async () => { showError('Coming soon: overlay'); };
+  document.getElementById('phTap').onclick = async () => {
+    try {
+      const body = { action:'tap', gx:Number(document.getElementById('phGX').value), gy:Number(document.getElementById('phGY').value), dry_run: currentDryRun(), confirm_real: !currentDryRun() };
+      if (!currentDryRun() && !mustConfirmReal()) return;
+      await api('POST', '/api/phone/tap', body);
+    } catch (e) { showError(e.message); }
+  };
+  document.getElementById('phLongPress').onclick = async () => { showError('Coming soon: long press execution'); };
+  document.getElementById('phSwipe').onclick = async () => {
+    try {
+      const body = {
+        action:'swipe',
+        gx:Number(document.getElementById('phGX').value),
+        gy:Number(document.getElementById('phGY').value),
+        gx2:Number(document.getElementById('phGX2').value),
+        gy2:Number(document.getElementById('phGY2').value),
+        dry_run: currentDryRun(),
+        confirm_real: !currentDryRun()
+      };
+      if (!currentDryRun() && !mustConfirmReal()) return;
+      await api('POST', '/api/phone/swipe', body);
+    } catch (e) { showError(e.message); }
+  };
+  document.getElementById('phLift').onclick = async () => { showError('Coming soon: emergency lift (Z up)'); };
+
+  document.getElementById('taskAdd').onclick = async () => {
+    try {
+      await api('POST', '/api/task/add', {
+        name: document.getElementById('taskName').value || 'task',
+        mode: document.getElementById('taskMode').value,
+        instruction: document.getElementById('taskInstruction').value,
+      });
+      await refreshTasks();
+    } catch (e) { showError(e.message); }
+  };
+  document.getElementById('taskRun').onclick = async () => {
+    try {
+      const dry = currentDryRun();
+      let confirmReal = false;
+      if (!dry) {
+        if (!mustConfirmReal()) return;
+        confirmReal = true;
+      }
+      await api('POST', '/api/task/run', {
+        task_id: selectedTaskId(),
+        instruction: document.getElementById('taskInstruction').value,
+        mode: document.getElementById('taskMode').value,
+        dry_run: dry,
+        max_steps: Number(document.getElementById('taskMaxSteps').value || 30),
+        confirm_real: confirmReal,
+      });
+      await refreshStatus();
+    } catch (e) { showError(e.message); }
+  };
+  document.getElementById('taskStop').onclick = async () => { await api('POST', '/api/task/stop'); await refreshStatus(); };
+  document.getElementById('taskPause').onclick = async () => { showError('Coming soon: pause'); };
+  document.getElementById('taskResume').onclick = async () => { showError('Coming soon: resume'); };
+  document.getElementById('taskRefresh').onclick = refreshTasks;
+
+  document.getElementById('tmplOpenApp').onclick = () => {
+    document.getElementById('taskInstruction').value = 'Open the target app, locate the main button, and click it.';
+  };
+  document.getElementById('tmplInputSubmit').onclick = () => {
+    document.getElementById('taskInstruction').value = 'Click the input field, type text, click submit, and verify UI changes.';
+  };
+  document.getElementById('tmplPhoneTap').onclick = () => {
+    document.getElementById('taskMode').value = 'phone';
+    document.getElementById('taskInstruction').value = 'Tap the target area on the phone screen and verify page change.';
+  };
+
+  document.getElementById('schAdd').onclick = async () => {
+    try {
+      await api('POST', '/api/scheduler/add', {
+        task_id: document.getElementById('schTaskId').value || null,
+        name: document.getElementById('schName').value || null,
+        mode: document.getElementById('schMode').value,
+        instruction: document.getElementById('schInstr').value || null,
+        every_seconds: document.getElementById('schEvery').value ? Number(document.getElementById('schEvery').value) : null,
+        at_ts: document.getElementById('schAt').value ? Number(document.getElementById('schAt').value) : null,
+      });
+      await refreshScheduler();
+      await refreshTasks();
+    } catch (e) { showError(e.message); }
+  };
+  document.getElementById('schRefresh').onclick = refreshScheduler;
+  document.getElementById('schRunNow').onclick = async () => {
+    const id = document.getElementById('schTaskId').value || selectedTaskId();
+    if (!id) {
+      showError('task id required');
+      return;
+    }
+    try {
+      await api('POST', '/api/task/run', {task_id:id, dry_run: currentDryRun(), confirm_real: !currentDryRun()});
+      await refreshStatus();
+    } catch (e) { showError(e.message); }
+  };
+
+  document.getElementById('logRefresh').onclick = refreshLogs;
+  document.getElementById('logClear').onclick = () => { document.getElementById('logConsole').textContent = ''; };
+  document.getElementById('logDownload').onclick = async () => {
+    const lines = Number(document.getElementById('logLines').value || 500);
+    const resp = await fetch(`/api/logs/download?lines=${Math.max(1, lines)}`);
+    const txt = await resp.text();
+    const blob = new Blob([txt], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'huweibot-web-logs.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  document.getElementById('sSave').onclick = async () => {
+    try {
+      await api('POST', '/api/settings', {
+        dry_run: !!document.getElementById('sDryRun').checked,
+        allow_real_execution: !!document.getElementById('sAllowReal').checked,
+        allow_fallback_to_dummy: !!document.getElementById('sFallback').checked,
+        default_provider: document.getElementById('sProvider').value || 'dummy',
+      });
+      await refreshStatus();
+    } catch (e) { showError(e.message); }
+  };
+}
+
+async function refreshVersion() {
+  try {
+    const v = await api('GET', '/api/version');
+    document.getElementById('versionInfo').textContent = `name=${v.name} version=${v.version} commit=${v.git_commit || 'unknown'}`;
+  } catch (e) {
+    document.getElementById('versionInfo').textContent = e.message;
+  }
+}
+
+async function boot() {
+  bindTabs();
+  await bindActions();
+  await refreshStatus();
+  await refreshTasks();
+  await refreshScheduler();
+  await refreshLogs();
+  await refreshVersion();
+  setInterval(async () => {
+    await refreshStatus();
+    await refreshLogs();
+  }, 1500);
+}
+
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "mode": "delta",
+  "elements_delta": 0,
+  "sampling_rule": "changed_elements_limit_elements_delta_max",
+  "elements_delta_sampling": {
+    "raw_changed_count": 0,
+    "kept_count": 0,
+    "disappeared_count": 0,
+    "sampling_rule": "near_target_or_cursor_then_new_high_conf_then_other"
+  },
+  "delta_prune": {
+    "clipped": true,
+    "reason": "delta_lock",
+    "allowlist": [
+      "c",
+      "ed",
+      "la",
+      "lv",
+      "ms",
+      "u"
+    ],
+    "kept_keys": [
+      "c",
+      "ed",
+      "la",
+      "lv",
+      "ms",
+      "u"
+    ],
+    "removed_keys": [
+      "task",
+      "constraints",
+      "system",
+      "full_elements"
+    ],
+    "removed_sizes": {
+      "task": 6,
+      "constraints": 72,
+      "system": 12,
+      "full_elements": 2
+    },
+    "dropped_bytes_estimate": 92
+  },
+  "last_sent_obs_digest": null,
+  "new_obs_digest": "dd65667fa4176e4f",
+  "clipped": true,
+  "clip_reason": "removed:task,constraints,system,full_elements",
+  "prompt_chars": 117,
+  "packed_elements": 0
+}

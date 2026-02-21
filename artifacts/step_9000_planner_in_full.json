@@ -1,0 +1,76 @@
+{
+  "task": "doctor_full",
+  "constraints": [
+    "pure_mouse_only",
+    "no_system_api_injection",
+    "type_text_requires_osk",
+    "click_scroll_should_verify"
+  ],
+  "obs": {
+    "v": 1,
+    "enc": "packed",
+    "m": 1,
+    "c": [
+      250,
+      297,
+      90,
+      "arrow"
+    ],
+    "a": "settingsapp",
+    "k": false,
+    "u": 0.2,
+    "e": [
+      [
+        "btn_ok_for_doctor_check",
+        "b",
+        "ok",
+        63,
+        204,
+        83,
+        63,
+        93,
+        "o"
+      ],
+      [
+        "input_name_for_doctor_check",
+        "i",
+        "namefield",
+        167,
+        204,
+        281,
+        74,
+        88,
+        "h"
+      ],
+      [
+        "title_for_doctor_check",
+        "t",
+        "verylongtitl~ijklmn",
+        42,
+        28,
+        364,
+        74,
+        84,
+        "o"
+      ]
+    ]
+  },
+  "memory": {
+    "last_action": {
+      "type": "CLICK",
+      "payload": {
+        "target": {
+          "by": "id",
+          "id": "btn_ok_for_doctor_check"
+        }
+      }
+    },
+    "last_verify": {
+      "ok": false,
+      "score": 0.0
+    },
+    "macro_state": {
+      "long_text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  }
+}

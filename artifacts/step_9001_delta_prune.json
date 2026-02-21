@@ -1,0 +1,35 @@
+{
+  "clipped": true,
+  "reason": "delta_lock",
+  "allowlist": [
+    "c",
+    "ed",
+    "la",
+    "lv",
+    "ms",
+    "u"
+  ],
+  "kept_keys": [
+    "c",
+    "ed",
+    "la",
+    "lv",
+    "ms",
+    "u"
+  ],
+  "removed_keys": [
+    "task",
+    "constraints",
+    "system",
+    "full_elements",
+    "ms.long_text"
+  ],
+  "removed_sizes": {
+    "task": 14,
+    "constraints": 72,
+    "system": 12,
+    "full_elements": 628,
+    "ms.long_text": 902
+  },
+  "dropped_bytes_estimate": 1628
+}

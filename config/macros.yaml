@@ -1,0 +1,59 @@
+version: 1
+defaults:
+  allow_hotkey: false
+  target_machine: B
+macros:
+  OPEN_APP:
+    description: "Open app launcher/search on machine B with mouse-only primary path."
+    path_order:
+      - path_a
+      - path_b
+    paths:
+      path_a:
+        - action: click
+          selector: "role:button text_contains_any:start,windows"
+          note: "Open Start menu on machine B."
+        - action: wait
+          wait_ms: 300
+        - action: click
+          selector: "role:input text_contains_any:search,find"
+      path_b:
+        - action: click
+          selector: "role:button text_contains_any:start"
+      hotkey_optional:
+        requires_hotkey: true
+        steps:
+          - action: hotkey
+            keys: "ctrl+esc"
+            note: "Optional fallback, disabled unless allow_hotkey=true."
+
+  OPEN_OSK:
+    description: "Open on-screen keyboard on machine B with pure mouse fallback paths."
+    path_order:
+      - path_a
+      - path_b
+      - path_c
+    paths:
+      path_a:
+        - action: click
+          selector: "role:button text_contains_any:start,windows"
+        - action: click
+          selector: "role:input text_contains_any:search,find"
+        - action: click
+          selector: "role:button text_contains_any:on-screen keyboard,osk,touch keyboard"
+      path_b:
+        - action: click
+          selector: "role:button text_contains_any:settings"
+        - action: click
+          selector: "role:button text_contains_any:accessibility,ease of access"
+        - action: click
+          selector: "role:button text_contains_any:keyboard"
+        - action: click
+          selector: "role:button text_contains_any:on-screen keyboard,osk"
+      path_c:
+        - action: click
+          selector: "role:button text_contains_any:taskbar"
+        - action: right_click
+          selector: "role:button text_contains_any:taskbar"
+        - action: click
+          selector: "role:button text_contains_any:touch keyboard,on-screen keyboard"
