@@ -23,6 +23,7 @@ dev = [
   "uvicorn",
   "rich",
   "pytest",
+  "build",
 ]
 
 [project.scripts]

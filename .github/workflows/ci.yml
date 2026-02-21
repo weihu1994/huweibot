@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip setuptools wheel
+          python -m pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Show dist artifacts
+        run: ls -lh dist
+
+      - name: Enforce wheel size limit (30MB)
+        run: |
+          python - <<'PY'
+          import glob
+          import os
+          import sys
+          import zipfile
+
+          wheels = sorted(glob.glob("dist/*.whl"))
+          if not wheels:
+            print("ERROR: no wheel produced in dist/")
+            raise SystemExit(1)
+
+          limit = 30 * 1024 * 1024
+          too_large = False
+          for whl in wheels:
+            size = os.path.getsize(whl)
+            print(f"{whl}: {size} bytes")
+            if size > limit:
+              too_large = True
+              print(f"ERROR: {whl} is larger than 30MB")
+              print("Top 30 largest wheel entries:")
+              with zipfile.ZipFile(whl) as zf:
+                infos = sorted(zf.infolist(), key=lambda i: i.file_size, reverse=True)[:30]
+                for info in infos:
+                  print(f"{info.file_size:>10}  {info.filename}")
+
+          if too_large:
+            raise SystemExit(1)
+          PY
