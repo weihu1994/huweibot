@@ -4,8 +4,6 @@
 
 huweibot is a tool-style agent framework for physical GUI automation.
 
-
-
 ## How it works (PC + Phone)
 
 - **Two-machine topology:** Machine A runs huweibot and controls Machine B purely through camera observation and physical actuation.
@@ -65,8 +63,24 @@ huweibot is a tool-style agent framework for physical GUI automation.
 
 ## Looking for collaborators
 
-This project still has many areas to improve, and my personal bandwidth is limited. If you’re interested in building huweibot together, feel free to contact me at **weihu19940327@gmail.com**.
+This project still has many areas to improve, and my personal bandwidth is limited. I believe huweibot can soon become a physical-machine tool that helps people accomplish a wide range of tasks on computers and phones. If you’re interested in building huweibot together, feel free to contact me at **weihu19940327@gmail.com**.
 
+## Quick Start
+```bash
+pip install -e .
+python3 -m huweibot.main --help
+python3 scripts/preview_camera.py --help
+python3 scripts/calibrate_screen.py --help
+python3 scripts/inspect_elements.py --help
+python3 -m huweibot.main doctor --help
+```
+
+Smoke command note:
+- Prefer `.venv_smoke/bin/python` when running smoke checks; if unavailable, use `python3`.
+- For fresh repositories without commits, use `git rev-parse --short HEAD 2>/dev/null || echo "N/A (no commits yet)"`.
+
+<details>
+<summary>Extended Reference (Constraints, Scope, and Step-by-Step Notes)</summary>
 
 ## Hard System Constraints (Must Hold)
 - Two-machine topology: machine A controls machine B.
@@ -96,21 +110,6 @@ This project still has many areas to improve, and my personal bandwidth is limit
 - Step 13: runtime validation commands (`osk-demo`, `list-macros`, `run-macro`, `home-check`, `drift-check`, `rule-script`).
 - Step 14: per-step artifact logging (`step_XXXX_*`) for observe/plan/resolve/act/verify replay.
 - Step 15: semantic safety guard (region/environment/homing/soft-limit/type-text permission rails) with hard blocking.
-
-## Quick Start
-```bash
-pip install -e .
-python3 -m huweibot.main --help
-python3 scripts/preview_camera.py --help
-python3 scripts/calibrate_screen.py --help
-python3 scripts/inspect_elements.py --help
-python3 -m huweibot.main doctor --help
-```
-
-Smoke command note:
-- Prefer `.venv_smoke/bin/python` when running smoke checks; if unavailable, use `python3`.
-- For fresh repositories without commits, use `git rev-parse --short HEAD 2>/dev/null || echo "N/A (no commits yet)"`.
-
 
 ## Migration (xbot -> huweibot)
 - New package and command: `huweibot`.
@@ -362,3 +361,5 @@ python3 -m huweibot.main web --host 0.0.0.0 --port 8000
 ```
 - If missing dependencies: `pip install -e ".[dev]"`.
 - This is an entry-layer console only; it triggers existing commands and keeps core execution behavior unchanged.
+
+</details>
