@@ -1,1 +1,0 @@
-{"action": {"type": "WAIT", "duration_ms": 500}, "verify": {"type": "NONE"}, "obs_mode": "delta"}
