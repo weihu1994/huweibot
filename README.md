@@ -1,7 +1,6 @@
 [![CI](https://github.com/weihu1994/huweibot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/weihu1994/huweibot/actions/workflows/ci.yml)
 
-![huweibot Web Console (MVP+)](assets/web_console_mvp.png)
-
+[![huweibot Web Console (MVP+)](assets/web_console.png)](assets/web_console.png)
 
 # huweibot
 
@@ -78,7 +77,7 @@ python3 scripts/inspect_elements.py --help
 python3 -m huweibot.main doctor --help
 ```
 
-Smoke command note:
+### Smoke command note
 - Prefer `.venv_smoke/bin/python` when running smoke checks; if unavailable, use `python3`.
 - For fresh repositories without commits, use `git rev-parse --short HEAD 2>/dev/null || echo "N/A (no commits yet)"`.
 
