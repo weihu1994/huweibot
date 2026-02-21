@@ -1,3 +1,5 @@
+[![CI](https://github.com/weihu1994/huweibot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/weihu1994/huweibot/actions/workflows/ci.yml)
+
 # huweibot
 
 huweibot is a tool-style agent framework for physical GUI automation.
