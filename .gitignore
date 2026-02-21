@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv
+.venv/
+.venv_*/
+venv/
+env/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Logs / captures / local data
+logs/
+captures/
+artifacts/
+*.log
