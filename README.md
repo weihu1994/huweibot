@@ -4,6 +4,70 @@
 
 huweibot is a tool-style agent framework for physical GUI automation.
 
+
+
+## How it works (PC + Phone)
+
+- **Two-machine topology:** Machine A runs huweibot and controls Machine B purely through camera observation and physical actuation.
+- **Closed-loop control:** Each step follows capture → interpret → plan → act → verify → retry.
+- **No software injection on B:** huweibot does not use remote-control protocols (RDP/VNC), does not call OS automation APIs on B, and does not inject keyboard events.
+- **Pure-mouse input:** Text entry is performed by clicking B’s on-screen keyboard (OSK) keys with the physical pointer (no virtual typing).
+- **UI understanding:** The agent relies on structured observations (detected UI elements, text/OCR when available, clickable regions, and screen/app context) so the model can output structured actions (move/click/scroll/type-via-OSK) instead of free-form guesses.
+- **Safety + verification:** Actions are gated by calibration and limits (screen validation, ROI bounds, soft limits, homing) and verified via observable changes (element/text/screen deltas). On mismatch, the agent corrects and retries.
+
+### PC mode (mouse on a moving pad)
+
+- A camera captures the full display of Machine B.
+- huweibot maps the rectified screen to a coordinate system (e.g., a 1000×1000 grid as a fallback) and decides a target position.
+- A physical XY stage moves a pad under the mouse to move the cursor; separate actuators perform left/right clicks.
+- After each move/click, the camera captures again and the agent verifies the expected UI change.
+
+### Phone mode (stylus on an XY(Z) stage)
+
+- A camera points at the phone screen; the agent first calibrates the phone screen ROI (screen boundary).
+- Within that ROI, huweibot operates on a bounded grid (e.g., 200×100) for safe targeting.
+- A stylus mounted on an XY(Z) stage performs moves and taps (Z-down).
+- An IR distance sensor helps estimate stylus-to-screen distance and can block unsafe taps.
+- Every interaction is verified via the next camera frame; failures trigger retries/corrections.
+
+---
+
+## Hardware required
+
+### Common
+
+- **Machine A (controller):** a computer to run huweibot (camera capture + planning + serial control).
+- **Camera + mount:** a stable camera that can capture the full target screen (PC monitor or phone) with a rigid mount/tripod.
+- **Consistent lighting (recommended):** reduces glare and improves cursor/UI detection.
+
+### PC mode
+
+- **Machine B (target PC):** the computer being operated.
+- **XY motion stage (mouse pad stage):** a platform that can move in X/Y under the mouse to drive cursor motion.
+- **Click actuators:** two small actuators for left-click and right-click (or a combined mechanism).
+- **Motion controller + drivers:** e.g., a GRBL-compatible controller, stepper drivers, motors, and a power supply.
+- **Limit/homing support (recommended):** endstops or a homing flag for safe startup and drift control.
+
+### Phone mode
+
+- **Phone device + fixed holder:** keeps the screen stationary relative to the camera and stylus.
+- **XY(Z) motion stage:** supports X/Y movement plus Z-down tapping.
+- **Stylus/pen mount:** a rigid holder for a conductive stylus or touch pen.
+- **IR distance sensor (recommended):** provides distance measurements and enables tap safety gating.
+
+### Optional but useful
+
+- **Emergency stop switch** (highly recommended).
+- **Calibration markers/board** for faster, repeatable homography/ROI calibration.
+- **Enclosure or guards** to prevent the actuator from leaving the safe work area.
+
+---
+
+## Looking for collaborators
+
+This project still has many areas to improve, and my personal bandwidth is limited. If you’re interested in building huweibot together, feel free to contact me at **weihu19940327@gmail.com**.
+
+
 ## Hard System Constraints (Must Hold)
 - Two-machine topology: machine A controls machine B.
 - A can only "see + act": camera observation of B screen + mechanical mouse movement/click on B.
